@@ -10,6 +10,7 @@ const Home: NextPage = () => {
   const { ethereum, provider, contract, isLoading } = UseWeb3();
   // console.log(ethereum);
   // console.log(provider);
+  console.log(contract);
 
   const getAccounts = async () => {
     const accounts = await provider!.listAccounts();
