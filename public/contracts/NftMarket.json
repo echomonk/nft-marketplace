@@ -1,15 +1,15 @@
 {
   "contractName": "NftMarket",
   "abi": [],
-  "metadata": "{\"compiler\":{\"version\":\"0.8.17+commit.8df45f5f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/NftMarket.sol\":\"NftMarket\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/NftMarket.sol\":{\"keccak256\":\"0xddce1475fddaaad55c6760f7fde37523981fdeb681978d3b438f5fcce0882521\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://83d8887e4b3c2360896df4aa2c0fb4a76f0bb12868fe902d602248f8c097e51d\",\"dweb:/ipfs/QmTYWXXdZCKmgQndNf25ioZRtH9i1DFZwNWhEij9F19Cv4\"]}},\"version\":1}",
-  "bytecode": "0x6080604052348015600f57600080fd5b50603f80601d6000396000f3fe6080604052600080fdfea2646970667358221220ba0ee349a0c6aa72f31b626e52f94ea74e2e183d9f394339d087bda03ef34eb664736f6c63430008110033",
-  "deployedBytecode": "0x6080604052600080fdfea2646970667358221220ba0ee349a0c6aa72f31b626e52f94ea74e2e183d9f394339d087bda03ef34eb664736f6c63430008110033",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.17+commit.8df45f5f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/NftMarket.sol\":\"NftMarket\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/NftMarket.sol\":{\"keccak256\":\"0xbb9f6ccb9a4c76c25be736e56357af19756cb2398c8f274b7cfe8eb7a1963628\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://85fe3ea3ec271c2defea4e8a50ea404c5c139a834072d5dc9aaec482ffc28b0b\",\"dweb:/ipfs/QmbbfbRNTmjNf3E29rKjakLwMcoGz26QKTvyWb3aJSvuso\"]}},\"version\":1}",
+  "bytecode": "0x6080604052348015600f57600080fd5b50603f80601d6000396000f3fe6080604052600080fdfea264697066735822122052885288a68beecd86b8675fb442e447028861de86f4bd730113ccca026fade064736f6c63430008110033",
+  "deployedBytecode": "0x6080604052600080fdfea264697066735822122052885288a68beecd86b8675fb442e447028861de86f4bd730113ccca026fade064736f6c63430008110033",
   "immutableReferences": {},
   "generatedSources": [],
   "deployedGeneratedSources": [],
-  "sourceMap": "73:21:0:-:0;;;;;;;;;;;;;;;;;;;",
-  "deployedSourceMap": "73:21:0:-:0;;;;;",
-  "source": "// SPDX-License-Identifier: UNLICENSED\npragma solidity >=0.4.22 <0.9.0;\n\ncontract NftMarket {}",
+  "sourceMap": "66:21:0:-:0;;;;;;;;;;;;;;;;;;;",
+  "deployedSourceMap": "66:21:0:-:0;;;;;",
+  "source": "// SPDX-License-Identifier: MIT\npragma solidity >=0.4.22 <0.9.0;\n\ncontract NftMarket {}",
   "sourcePath": "/Users/erdal/blockchain/nft-marketplace/contracts/NftMarket.sol",
   "ast": {
     "absolutePath": "project:/contracts/NftMarket.sol",
@@ -19,7 +19,7 @@
       ]
     },
     "id": 3,
-    "license": "UNLICENSED",
+    "license": "MIT",
     "nodeType": "SourceUnit",
     "nodes": [
       {
@@ -34,7 +34,7 @@
           ".0"
         ],
         "nodeType": "PragmaDirective",
-        "src": "39:32:0"
+        "src": "32:32:0"
       },
       {
         "abstract": false,
@@ -48,15 +48,15 @@
           2
         ],
         "name": "NftMarket",
-        "nameLocation": "82:9:0",
+        "nameLocation": "75:9:0",
         "nodeType": "ContractDefinition",
         "nodes": [],
         "scope": 3,
-        "src": "73:21:0",
+        "src": "66:21:0",
         "usedErrors": []
       }
     ],
-    "src": "39:55:0"
+    "src": "32:55:0"
   },
   "compiler": {
     "name": "solc",
@@ -66,12 +66,12 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0xe6D96492D657Fab106E59851e7212f125A96D77d",
-      "transactionHash": "0xca5b3331b9cedd2311e944f2852476c69dea9abceaa289b16fbe673c4310b922"
+      "address": "0xaE7850B3C752655AA7642485538BB60c840122D3",
+      "transactionHash": "0xdb231841fd3e7fe33eafb7f2c65f280e97f5f87986186079ba83007b91184a69"
     }
   },
   "schemaVersion": "3.4.10",
-  "updatedAt": "2022-10-29T13:13:58.533Z",
+  "updatedAt": "2022-10-30T03:32:32.334Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
