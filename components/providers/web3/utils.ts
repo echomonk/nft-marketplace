@@ -29,7 +29,7 @@ export const createDefaultState = () => {
 const NETWORK_ID = process.env.NEXT_PUBLIC_NETWORK_ID;
 
 export const loadContract = async (
-  name: string, //NftMarket
+  name: string, // NftMarket
   provider: providers.Web3Provider
 ): Promise<Contract> => {
   if (!NETWORK_ID) {
@@ -45,6 +45,7 @@ export const loadContract = async (
       Artifact.abi,
       provider
     );
+
     return contract;
   } else {
     return Promise.reject(`Contract: [${name}] cannot be loaded!`);

@@ -7,19 +7,7 @@ import { NftMeta } from "@_types/nft";
 import { UseWeb3 } from "@providers/web3";
 
 const Home: NextPage = () => {
-  const { ethereum, provider, contract, isLoading } = UseWeb3();
-  // console.log(ethereum);
-  // console.log(provider);
-  console.log(contract);
-
-  const getAccounts = async () => {
-    const accounts = await provider!.listAccounts();
-    console.log(accounts[0]);
-  };
-
-  if (provider) {
-    getAccounts();
-  }
+  const { provider, contract } = UseWeb3();
 
   return (
     <BaseLayout>
