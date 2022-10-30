@@ -1,7 +1,8 @@
+import { CryptoHookFactory } from "@_types/hooks";
 import useSWR from "swr";
 
 // deps ->  provider, ethereum, contract (web3state)
-export const hookFactory = (deps: any) => (params: any) => {
+export const hookFactory: CryptoHookFactory = (deps: any) => (params) => {
   const swrRes = useSWR("web3/useAccount", () => {
     return "Test User";
   });
@@ -10,4 +11,7 @@ export const hookFactory = (deps: any) => (params: any) => {
   return swrRes;
 };
 
-export const useAccount = hookFactory({ ethereum: null, provider: null });
+export const useAccount = hookFactory({
+  ethereum: undefined,
+  provider: undefined,
+});
