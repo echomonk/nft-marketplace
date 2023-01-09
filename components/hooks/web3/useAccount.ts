@@ -8,10 +8,22 @@ export type UseAccountHook = ReturnType<AccountHookFactory>;
 // deps ->  provider, ethereum, contract (web3state)
 export const hookFactory: AccountHookFactory =
   ({ provider }) =>
-  (params) => {
-    const swrRes = useSWR(provider ? "web3/useAccount" : null, () => {
-      return "Test User";
-    });
+  () => {
+    const swrRes = useSWR(
+      provider ? "web3/useAccount" : null,
+      async () => {
+        const accounts = await provider!.listAccounts();
+        const account = accounts[0];
+
+        if (!account) {
+          throw "Cannot retrieve account! Please connect to web3 wallet.";
+        }
+        return account;
+      },
+      {
+        revalidateOnFocus: false,
+      }
+    );
 
     return swrRes;
   };
