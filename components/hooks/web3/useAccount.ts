@@ -20,6 +20,7 @@ export const hookFactory: AccountHookFactory =
         }
         return account;
       },
+      // Preventing funtion trigger on focus
       {
         revalidateOnFocus: false,
       }
