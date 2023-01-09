@@ -1,13 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
-
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
 import Link from "next/link";
 import ActiveLink from "../link";
 import { useAccount } from "@hooks/web3";
-
-// import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/24/solid";
 
 const navigation = [
   { name: "Marketplace", href: "/", current: true },
