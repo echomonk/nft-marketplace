@@ -22,6 +22,7 @@ export default function Navbar() {
     <Disclosure as="nav" className="bg-gray-800">
       {({ open }) => (
         <>
+          {shortenAddress(account.data)}
           <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
             <div className="relative flex items-center justify-between h-16">
               <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
@@ -152,3 +153,17 @@ export default function Navbar() {
     </Disclosure>
   );
 }
+
+/**
+ * Shorten a wallet address to show only the first and last 5 characters
+ * @param address: address to shorten
+ * @returns string: transformed address
+ */
+export const shortenAddress = (address: string) => {
+  if (address !== undefined) {
+    return `${address.slice(0, 5)}...${address.slice(
+      address.length - 5,
+      address.length
+    )}`;
+  }
+};

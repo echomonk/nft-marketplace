@@ -1,4 +1,5 @@
 import { CryptoHookFactory } from "@_types/hooks";
+import { useEffect } from "react";
 import useSWR from "swr";
 
 type AccountHookFactory = CryptoHookFactory<string, UseAccountResponse>;
@@ -13,7 +14,7 @@ export type UseAccountHook = ReturnType<AccountHookFactory>;
 export const hookFactory: AccountHookFactory =
   ({ provider, ethereum }) =>
   () => {
-    const swrRes = useSWR(
+    const { data, mutate, ...swr } = useSWR(
       provider ? "web3/useAccount" : null,
       async () => {
         const accounts = await provider!.listAccounts();
@@ -24,11 +25,38 @@ export const hookFactory: AccountHookFactory =
         }
         return account;
       },
-      // Preventing funcion trigger on focus
+
+      // Preventing function trigger on focus
       {
         revalidateOnFocus: false,
       }
     );
+
+    //--------------------------------------------------------------------------------------//
+    //                                Account Change Handler                                //
+    //--------------------------------------------------------------------------------------//
+
+    useEffect(() => {
+      ethereum?.on("accountsChanged", handleAccountChange);
+      return () => {
+        ethereum?.removeListener("accountsChanged", handleAccountChange);
+      };
+    });
+
+    const handleAccountChange = (...args: unknown[]) => {
+      const accounts = args[0] as string;
+
+      if (accounts.length === 0) {
+        console.error("Please connect to web3 wallet.");
+      } else if (accounts[0] !== data) {
+        // To display the address when use changes
+        mutate(accounts[0]);
+      }
+    };
+
+    //--------------------------------------------------------------------------------------//
+    //                                   Connect Metamask                                   //
+    //--------------------------------------------------------------------------------------//
 
     const connect = async () => {
       try {
@@ -39,7 +67,9 @@ export const hookFactory: AccountHookFactory =
     };
 
     return {
-      ...swrRes,
+      ...swr,
+      data,
+      mutate,
       connect,
     };
   };
