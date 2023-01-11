@@ -31,6 +31,7 @@ export const hookFactory: AccountHookFactory =
       // Preventing function trigger on focus
       {
         revalidateOnFocus: false,
+        shouldRetryOnError: false,
       }
     );
 
@@ -72,7 +73,7 @@ export const hookFactory: AccountHookFactory =
       ...swr,
       data,
       isValidating,
-      isLoading: isLoading || isValidating,
+      isLoading: isLoading,
       isInstalled: ethereum?.isMetaMask || false,
       mutate,
       connect,
