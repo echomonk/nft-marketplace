@@ -51,7 +51,7 @@ contract NftMarket is ERC721URIStorage {
      * @dev Gets the total number of tokens minted
      * @return The total number of tokens minted
      */
-    function listedItems() public view returns (uint) {
+    function listedItemsCount() public view returns (uint) {
         return _listedItems.current();
     }
 
@@ -86,6 +86,24 @@ contract NftMarket is ERC721URIStorage {
         _usedTokenURIs[tokenURI] = true;
 
         return newTokenId;
+    }
+
+    /**
+     * @dev Buys a token
+     * @param tokenId The tokenId of the token
+     */
+    function buyNft (uint tokenId) public payable {
+        uint price = _idToNftItem[tokenId].price;
+        address owner = ERC721.ownerOf(tokenId);
+
+        require(msg.sender != owner, "NftMarket: You cannot buy your own NFT");
+        require(msg.value == price, "NftMarket: Price must be equal to the NFT price");
+
+        _idToNftItem[tokenId].isListed = false;
+        _listedItems.decrement();
+
+        _transfer(owner, msg.sender, tokenId);
+        payable(owner).transfer(msg.value);
     }
 
     /**
