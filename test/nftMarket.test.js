@@ -48,7 +48,7 @@ contract("NftMarket", (accounts) => {
 
     // Test case 4 - Check if the contract has at least 1 listed item
     it("contract should have at least 1 listed item", async () => {
-      const listedItems = await _contract.listedItems();
+      const listedItems = await _contract.listedItemsCount();
       assert.equal(listedItems.toNumber(), 1, "Contract has no listed items");
     });
 
@@ -64,6 +64,38 @@ contract("NftMarket", (accounts) => {
         "Nft item creator is not correct"
       );
       assert.equal(nftItem.isListed, true, "Nft item is not listed");
+    });
+  });
+
+  describe("Buy NFT", () => {
+    before(async () => {
+      await _contract.buyNft(1, {
+        from: accounts[1],
+        value: _nftPrice,
+      });
+    });
+
+    // Test case 6 - Check if the item is still listed
+    it("should unlist the item", async () => {
+      const listedItem = await _contract.getNftItem(1);
+      assert.equal(listedItem.isListed, false, "Item is still listed");
+    });
+
+    // Test case 7 - Check if listed items count is decremented
+    it("should decrement the listed items count", async () => {
+      const listedItemCount = await _contract.listedItemsCount();
+
+      assert.equal(
+        listedItemCount.toNumber(),
+        0,
+        "Count has not been decremented"
+      );
+    });
+
+    // Test case 8 - Check if the NFT's owner has changed
+    it("should change the owner of the item", async () => {
+      const currentOwner = await _contract.ownerOf(1);
+      assert.equal(currentOwner, accounts[1], "Owner is still accounts[0]");
     });
   });
 });
