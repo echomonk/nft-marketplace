@@ -138,5 +138,11 @@ contract("NftMarket", (accounts) => {
       assert.equal(nftId1.toNumber(), 1, "Nft id is wrong");
       assert.equal(nftId2.toNumber(), 2, "Nft id is wrong");
     });
+
+    // Test case 11 - Check if contract has listed NFTs
+    it("should have one listed NFT", async () => {
+      const listedNfts = await _contract.getAllNftsOnSale();
+      assert.equal(listedNfts[0].tokenId, 2, "NFT is not listed");
+    });
   });
 });
