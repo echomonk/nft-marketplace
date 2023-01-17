@@ -13,24 +13,30 @@ contract NftMarket is ERC721URIStorage {
     Counters.Counter private _tokenIds;
     Counters.Counter private _listedItems;
 
+    // All NFTs in an array
+    uint256[] private _allNfts;
+
     // Mapping to store the tokenURI of a token
     mapping (string => bool) private _usedTokenURIs;
 
     // Mapping to store the NftItem of a token
-    mapping(uint => NftItem) private _idToNftItem;
+    mapping(uint256 => NftItem) private _idToNftItem;
+
+    // Mapping to store the index of the token to tokenIds array
+    mapping(uint256 => uint256) private _idToNftIndex;
 
     // NftItem struct to store the tokenId, price, creator and isListed
     struct NftItem {
-        uint tokenId;
-        uint price;
+        uint256 tokenId;
+        uint256 price;
         address creator;
         bool isListed;
     }
 
     // Events
     event NftItemCreated (
-        uint tokenId,
-        uint price,
+        uint256 tokenId,
+        uint256 price,
         address creator,
         bool isListed
     );
@@ -43,7 +49,7 @@ contract NftMarket is ERC721URIStorage {
      * @param tokenId The tokenId of the token
      * @return id The tokenId of the token
      */
-    function getNftItem(uint tokenId) public view returns (NftItem memory) {
+    function getNftItem(uint256 tokenId) public view returns (NftItem memory) {
         return _idToNftItem[tokenId];
     }
 
@@ -51,7 +57,7 @@ contract NftMarket is ERC721URIStorage {
      * @dev Gets the total number of tokens minted
      * @return The total number of tokens minted
      */
-    function listedItemsCount() public view returns (uint) {
+    function listedItemsCount() public view returns (uint256) {
         return _listedItems.current();
     }
 
@@ -65,12 +71,29 @@ contract NftMarket is ERC721URIStorage {
     }
 
     /**
+     * @dev Total number of tokens minted
+     */
+    function totalSupply() public view returns (uint256) {
+        return _allNfts.length;
+    }
+
+    /**
+     * @dev Gets the token at a given index
+     * @param index The index of the token
+     * @return TokenId of the token
+     */
+    function tokenByIndex(uint256 index) public view returns (uint256) {
+        require(index < totalSupply(), "ERC721Enumerable: global index out of bounds");
+        return _allNfts[index];
+    }
+
+    /**
      * @dev Mints a new token
      * @param tokenURI The tokenURI of the token
      * @param price The price of the token
-     * @return The tokenId of the token
+     * @return TokenId of the token
      */
-    function mintToken (string memory tokenURI, uint price) public payable returns (uint256) {
+    function mintToken (string memory tokenURI, uint256 price) public payable returns (uint256) {
         require(!tokenUriExists(tokenURI), "NftMarket: Token URI already exists");
         require(msg.value == listingPrice, "Price must be equal to listing price");
 
@@ -93,7 +116,7 @@ contract NftMarket is ERC721URIStorage {
      * @param tokenId The tokenId of the token
      */
     function buyNft (uint tokenId) public payable {
-        uint price = _idToNftItem[tokenId].price;
+        uint256 price = _idToNftItem[tokenId].price;
         address owner = ERC721.ownerOf(tokenId);
 
         require(msg.sender != owner, "NftMarket: You cannot buy your own NFT");
@@ -111,12 +134,38 @@ contract NftMarket is ERC721URIStorage {
      * @param tokenId The tokenId of the token
      * @param price The price of the token
      */
-    function _createNftItem (uint tokenId, uint price) private {
+    function _createNftItem (uint256 tokenId, uint256 price) private {
        require(price > 0, "NftMarket: Price must be greater than 0");
 
        _idToNftItem[tokenId] = NftItem(tokenId, price, msg.sender,true);
 
         emit NftItemCreated(tokenId, price, msg.sender, true);
+    }
+
+    /**
+     *  @dev Adds the token to a list of all tokens that have been minted by the contract
+     *  @param from The address of the owner of the token
+     *  @param to The address of the new owner of the token
+     *  @param tokenId The tokenId of the token
+     */
+    function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual override {
+        super._beforeTokenTransfer(from, to, tokenId);
+
+        // Minting token
+        if (from == address(0)) {
+           _addTokenToAllTokensEnumeration(tokenId);
+        }
+    }
+
+    /**
+     * @dev Adds a token to the allTokens array...
+     * ...to keep track of all the tokens that have been...
+     * ...minted by the smart contract.
+     * @param tokenId The tokenId of the token
+     */
+    function _addTokenToAllTokensEnumeration(uint256 tokenId) private {
+        _idToNftIndex[tokenId] = _allNfts.length;
+        _allNfts.push(tokenId);
     }
 
 }
