@@ -10,6 +10,10 @@ contract("NftMarket", (accounts) => {
     _contract = await NftMarket.deployed();
   });
 
+  //--------------------------------------------------------------------------------------//
+  //                                   MINT TOKEN TESTS                                   //
+  //--------------------------------------------------------------------------------------//
+
   describe("Mint token", () => {
     const tokenURI = "https://test.com";
     before(async () => {
@@ -67,6 +71,10 @@ contract("NftMarket", (accounts) => {
     });
   });
 
+  //--------------------------------------------------------------------------------------//
+  //                                    BUY NFT TESTS                                     //
+  //--------------------------------------------------------------------------------------//
+
   describe("Buy NFT", () => {
     before(async () => {
       await _contract.buyNft(1, {
@@ -98,6 +106,10 @@ contract("NftMarket", (accounts) => {
       assert.equal(currentOwner, accounts[1], "Owner is still accounts[0]");
     });
   });
+
+  //--------------------------------------------------------------------------------------//
+  //                                 TOKEN TRANSFER TESTS                                 //
+  //--------------------------------------------------------------------------------------//
 
   describe("Token transfers", () => {
     const tokenURI = "https://test-json-2.com";
