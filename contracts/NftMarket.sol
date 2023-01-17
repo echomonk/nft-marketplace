@@ -88,6 +88,27 @@ contract NftMarket is ERC721URIStorage {
     }
 
     /**
+     * @dev Gets all the NFTs on sale
+     */
+    function getAllNftsOnSale() public view returns (NftItem[] memory) {
+        uint256 allItemsCounts = totalSupply();
+        uint256 currentIndex = 0;
+        NftItem[] memory items = new NftItem[](_listedItems.current());
+
+        for (uint i = 0; i < allItemsCounts; i++) {
+            uint256 tokenId = tokenByIndex(i);
+            NftItem storage item = _idToNftItem[tokenId];
+
+        if (item.isListed == true) {
+            items[currentIndex] = item;
+            currentIndex += 1;
+           }
+        }
+
+        return items;
+    }
+
+    /**
      * @dev Mints a new token
      * @param tokenURI The tokenURI of the token
      * @param price The price of the token
