@@ -144,5 +144,64 @@ contract("NftMarket", (accounts) => {
       const listedNfts = await _contract.getAllNftsOnSale();
       assert.equal(listedNfts[0].tokenId, 2, "NFT is not listed");
     });
+
+    // Test case 12 - Check if we get the correct index of the NFT
+    it("account[1] should have one owned NFT", async () => {
+      const ownedNfts = await _contract.getOwnedNfts({ from: accounts[1] });
+      assert.equal(ownedNfts[0].tokenId, 1, "Nft has a wrong id");
+    });
+
+    // Test case 13 - Check if we get the correct index of the NFT
+    it("account[0] should have one owned NFT", async () => {
+      const ownedNfts = await _contract.getOwnedNfts({ from: accounts[0] });
+      assert.equal(ownedNfts[0].tokenId, 2, "Nft has a wrong id");
+    });
+  });
+
+  describe("Token transfer to new owner", () => {
+    before(async () => {
+      await _contract.transferFrom(accounts[0], accounts[1], 2);
+    });
+
+    // Test case 14 - Check if account[0] has no NFTs
+    it("accounts[0] should own 0 tokens", async () => {
+      const ownedNfts = await _contract.getOwnedNfts({ from: accounts[0] });
+      assert.equal(ownedNfts.length, 0, "Nft has a wrong id");
+    });
+
+    // Test case 15 - Check if account[1] has 2 NFTs
+    it("accounts[1] should own 2 tokens", async () => {
+      const ownedNfts = await _contract.getOwnedNfts({ from: accounts[1] });
+      assert.equal(ownedNfts.length, 2, "Nft has a wrong id");
+    });
+  });
+
+  //--------------------------------------------------------------------------------------//
+  //                                   BURN TOKEN TESTS                                   //
+  //--------------------------------------------------------------------------------------//
+
+  describe("Burn Token", () => {
+    const tokenURI = "https://test-json3.com";
+    before(async () => {
+      await _contract.mintToken(tokenURI, _nftPrice, {
+        from: accounts[2],
+        value: _listingPrice,
+      });
+    });
+
+    // Test case 16 - Check if account[2] has one NFT
+    it("account[2] should have one owned NFT", async () => {
+      const ownedNfts = await _contract.getOwnedNfts({ from: accounts[2] });
+
+      assert.equal(ownedNfts[0].tokenId, 3, "Nft has a wrong id");
+    });
+
+    // Test case 17 - Check if account[2] token burn is successful
+    it("account[2] should own 0 NFTs", async () => {
+      await _contract.burnToken(3, { from: accounts[2] });
+      const ownedNfts = await _contract.getOwnedNfts({ from: accounts[2] });
+
+      assert.equal(ownedNfts.length, 0, "Invalid length of tokens");
+    });
   });
 });
