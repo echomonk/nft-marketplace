@@ -17,3 +17,13 @@ export const useNetwork = () => {
     network: swrRes,
   };
 };
+
+// Use Listed Nfts Hook
+export const useListedNfts = () => {
+  const hooks = useHooks();
+  const swrRes = hooks.useListedNfts();
+
+  return {
+    nfts: swrRes,
+  };
+};
