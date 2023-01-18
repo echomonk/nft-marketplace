@@ -204,4 +204,32 @@ contract("NftMarket", (accounts) => {
       assert.equal(ownedNfts.length, 0, "Invalid length of tokens");
     });
   });
+
+  //--------------------------------------------------------------------------------------//
+  //                                    LIST NFT TESTS                                    //
+  //--------------------------------------------------------------------------------------//
+
+  describe("List an Nft", () => {
+    before(async () => {
+      await _contract.placeNftOnSale(1, _nftPrice, {
+        from: accounts[1],
+        value: _listingPrice,
+      });
+    });
+
+    // Test case 18 - Check if account[1] has listed NFTs
+    it("should have three listed items", async () => {
+      const listedNfts = await _contract.getAllNftsOnSale();
+
+      assert.equal(listedNfts.length, 3, "Invalid length of Nfts");
+    });
+
+    // Test case 19 - Check if account[1]'s listed NFT price is correct
+    it("should set new listing price", async () => {
+      await _contract.setListingPrice(_listingPrice, { from: accounts[0] });
+      const listingPrice = await _contract.listingPrice();
+
+      assert.equal(listingPrice.toString(), _listingPrice, "Invalid Price");
+    });
+  });
 });

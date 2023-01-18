@@ -3,8 +3,9 @@ pragma solidity >=0.4.22 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract NftMarket is ERC721URIStorage {
+contract NftMarket is ERC721URIStorage, Ownable {
     using Counters for Counters.Counter;
 
     // Listing price of the NFT
@@ -50,7 +51,16 @@ contract NftMarket is ERC721URIStorage {
     constructor() ERC721("CreaturesNFT", "CNFT") {}
 
     /**
-     * @dev Gets the NftItem of a token
+     * Set the listing price of the NFT
+     * @param newPrice The new listing price
+     */
+    function setListingPrice(uint256 newPrice) external onlyOwner {
+        require(newPrice > 0, "Price must be at least 1 wei");
+        listingPrice = newPrice;
+    }
+
+    /**
+     * Gets the NftItem of a token
      * @param tokenId The tokenId of the token
      * @return id The tokenId of the token
      */
@@ -59,7 +69,7 @@ contract NftMarket is ERC721URIStorage {
     }
 
     /**
-     * @dev Gets the total number of tokens minted
+     * Gets the total number of tokens minted
      * @return The total number of tokens minted
      */
     function listedItemsCount() public view returns (uint256) {
@@ -67,7 +77,7 @@ contract NftMarket is ERC721URIStorage {
     }
 
     /**
-     * @dev Checks if a tokenURI has been used before
+     * Checks if a tokenURI has been used before
      * @param tokenURI The tokenURI of the token
      * @return True if the tokenURI has been used before
      */
@@ -83,7 +93,7 @@ contract NftMarket is ERC721URIStorage {
     }
 
     /**
-     * @dev Gets the token at a given index
+     * Gets the token at a given index
      * @param index The index of the token
      * @return TokenId of the token
      */
@@ -96,7 +106,7 @@ contract NftMarket is ERC721URIStorage {
     }
 
     /**
-     * @dev Gets the token at a given index of the tokens list of the requested owner
+     * Gets the token at a given index of the tokens list of the requested owner
      * @param owner Address of the token owner
      * @param index uint256 representing the index to be accessed of the requested tokens list
      */
@@ -110,7 +120,7 @@ contract NftMarket is ERC721URIStorage {
     }
 
     /**
-     * @dev Gets all the NFTs on sale
+     * Gets all the NFTs on sale
      */
     function getAllNftsOnSale() public view returns (NftItem[] memory) {
         uint256 allItemsCounts = totalSupply();
@@ -131,7 +141,7 @@ contract NftMarket is ERC721URIStorage {
     }
 
     /**
-     * @dev Gets all the NFTs owned by the user
+     * Gets all the NFTs owned by the user
      */
     function getOwnedNfts() public view returns (NftItem[] memory) {
         uint256 ownedItemsCount = ERC721.balanceOf(msg.sender);
@@ -147,7 +157,7 @@ contract NftMarket is ERC721URIStorage {
     }
 
     /**
-     * @dev Mints a new token
+     * Mints a new token
      * @param tokenURI The tokenURI of the token
      * @param price The price of the token
      * @return TokenId of the token
@@ -181,7 +191,7 @@ contract NftMarket is ERC721URIStorage {
     }
 
     /**
-     * @dev Buys a token
+     * Buys a token
      * @param tokenId The tokenId of the token
      */
     function buyNft(uint256 tokenId) public payable {
@@ -202,7 +212,31 @@ contract NftMarket is ERC721URIStorage {
     }
 
     /**
-     * @dev Creates a new NftItem
+     * Places a token on sale
+     * @param tokenId The tokenId of the token
+     * @param newPrice The new price of the token
+     */
+    function placeNftOnSale(uint256 tokenId, uint256 newPrice) public payable {
+        require(
+            ERC721.ownerOf(tokenId) == msg.sender,
+            "You are not owner of this nft"
+        );
+        require(
+            _idToNftItem[tokenId].isListed == false,
+            "Item is already on sale"
+        );
+        require(
+            msg.value == listingPrice,
+            "Price must be equal to listing price"
+        );
+
+        _idToNftItem[tokenId].isListed = true;
+        _idToNftItem[tokenId].price = newPrice;
+        _listedItems.increment();
+    }
+
+    /**
+     * Creates a new NftItem
      * @param tokenId The tokenId of the token
      * @param price The price of the token
      */
@@ -215,7 +249,7 @@ contract NftMarket is ERC721URIStorage {
     }
 
     /**
-     * @dev Burns a token
+     * Burns a token
      * @param tokenId The tokenId of the token
      */
     function burnToken(uint256 tokenId) public {
@@ -223,7 +257,7 @@ contract NftMarket is ERC721URIStorage {
     }
 
     /**
-     *  @dev Adds the token to a list of all tokens that have been minted by the contract
+     *  Adds the token to a list of all tokens that have been minted by the contract
      *  @param from The address of the owner of the token
      *  @param to The address of the new owner of the token
      *  @param tokenId The tokenId of the token
@@ -250,7 +284,7 @@ contract NftMarket is ERC721URIStorage {
     }
 
     /**
-     * @dev Adds a token to the allTokens array...
+     * Adds a token to the allTokens array...
      * ...to keep track of all the tokens that have been...
      * ...minted by the smart contract.
      * @param tokenId The tokenId of the token
@@ -261,7 +295,7 @@ contract NftMarket is ERC721URIStorage {
     }
 
     /**
-     * @dev Adds a token to the ownerTokens array...
+     * Adds a token to the ownerTokens array...
      * ...to keep track of tokens owned by an address
      * @param to The address of the owner of the token
      * @param tokenId The tokenId of the token
@@ -276,7 +310,7 @@ contract NftMarket is ERC721URIStorage {
     }
 
     /**
-     * @dev Removes a token from the allTokens array...
+     * Removes a token from the allTokens array...
      * ...to keep track of all the tokens that have been...
      * ...burned by the owner
      * @param tokenId The tokenId of the token
@@ -296,7 +330,7 @@ contract NftMarket is ERC721URIStorage {
     }
 
     /**
-     * @dev Removes a token from the ownerTokens array...
+     * Removes a token from the ownerTokens array...
      * ...to keep track of tokens owned by an address
      * @param from The address of the owner of the token
      * @param tokenId The tokenId of the token
