@@ -13,6 +13,7 @@ import {
 } from "./utils";
 import { ethers } from "ethers";
 import { MetaMaskInpageProvider } from "@metamask/providers";
+import { NftMarketContract } from "@_types/nftMarketContract";
 
 const Web3Context = createContext<Web3State>(createDefaultState());
 
@@ -40,7 +41,7 @@ const Web3Provider: FunctionComponent<{ children: React.ReactNode }> = ({
           createWeb3State({
             ethereum: window.ethereum,
             provider,
-            contract,
+            contract: contract as unknown as NftMarketContract,
             isLoading: false,
           })
         );
