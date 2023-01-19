@@ -1,4 +1,5 @@
 import { CryptoHookFactory } from "@_types/hooks";
+import { Nft } from "@_types/nft";
 import useSWR from "swr";
 
 type UseListedNftsResponse = {};
@@ -12,6 +13,7 @@ export const hookFactory: ListedNftsHookFactory =
     const { data, ...swr } = useSWR(
       contract ? "web3/useListedNfts" : null,
       async () => {
+        const coreNfts = (await contract!.getAllNftsOnSale()) as Nft[];
         const nfts = [] as any;
         return nfts;
       }
