@@ -51,7 +51,7 @@ contract NftMarket is ERC721URIStorage, Ownable {
     constructor() ERC721("CreaturesNFT", "CNFT") {}
 
     /**
-     * Set the listing price of the NFT
+     * Set the listing price of the NFT later if needed
      * @param newPrice The new listing price
      */
     function setListingPrice(uint256 newPrice) external onlyOwner {
