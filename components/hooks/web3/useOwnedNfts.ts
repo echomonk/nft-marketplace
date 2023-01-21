@@ -1,6 +1,7 @@
 import { CryptoHookFactory } from "@_types/hooks";
 import { Nft } from "@_types/nft";
 import { ethers } from "ethers";
+import { useCallback } from "react";
 import useSWR from "swr";
 
 type UseOwnedNftsResponse = {
@@ -38,23 +39,29 @@ export const hookFactory: OwnedNftsHookFactory =
       }
     );
 
-    // Lists an owned NFT on the market
-    const listNft = async (tokenId: number, price: number) => {
-      try {
-        const result = await contract?.placeNftOnSale(
-          tokenId,
-          ethers.utils.parseEther(price.toString()),
-          {
-            value: ethers.utils.parseEther((0.025).toString()),
-          }
-        );
+    const _contract = contract;
 
-        await result?.wait();
-        alert("Item has been listed!");
-      } catch (e: any) {
-        console.error(e.message);
-      }
-    };
+    // Lists an owned NFT on the market
+    // Calling cached version to avoid re-rendering
+    const listNft = useCallback(
+      async (tokenId: number, price: number) => {
+        try {
+          const result = await _contract?.placeNftOnSale(
+            tokenId,
+            ethers.utils.parseEther(price.toString()),
+            {
+              value: ethers.utils.parseEther((0.025).toString()),
+            }
+          );
+
+          await result?.wait();
+          alert("Item has been listed!");
+        } catch (e: any) {
+          console.error(e.message);
+        }
+      },
+      [_contract]
+    );
 
     return {
       ...swr,
