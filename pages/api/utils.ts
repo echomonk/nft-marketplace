@@ -15,6 +15,9 @@ const abi = contract.abi;
 // Getting the contract address
 export const contractAddress = contract["networks"][targetNetwork]["address"];
 
+export const pinataApiKey = process.env.PINATA_API_KEY as string;
+export const pinataSecretApiKey = process.env.PIN_SECRET_API_KEY as string;
+
 // Setting up an authentication session
 export function withSession(handler: any) {
   return withIronSession(handler, {

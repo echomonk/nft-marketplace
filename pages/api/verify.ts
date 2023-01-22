@@ -1,11 +1,18 @@
 import { v4 as uuidv4 } from "uuid";
 import { Session } from "next-iron-session";
 import { NextApiRequest, NextApiResponse } from "next";
-import { withSession, contractAddress, addressCheckMiddleware } from "./utils";
+import {
+  withSession,
+  contractAddress,
+  addressCheckMiddleware,
+  pinataApiKey,
+  pinataSecretApiKey,
+} from "./utils";
 import { NftMeta } from "@_types/nft";
+import axios from "axios";
 
 /**
- * API route that generates a message
+ * API route that generates a message and uploads nft to Pinata
  * @param req NextApiRequest & Session
  * @param res NextApiResponse
  * @returns Message
@@ -25,7 +32,24 @@ export default withSession(
         }
         // Checking the address
         await addressCheckMiddleware(req, res);
-        res.status(200).send({ message: "Nft has been created" });
+
+        // Upload Metadata to Pinata
+        const jsonRes = await axios.post(
+          "https://api.pinata.cloud/pinning/pinJSONToIPFS",
+          {
+            pinataMetadata: {
+              name: uuidv4(),
+            },
+            pinataContent: nft,
+          },
+          {
+            headers: {
+              pinata_api_key: pinataApiKey,
+              pinata_secret_api_key: pinataSecretApiKey,
+            },
+          }
+        );
+        return res.status(200).send(jsonRes.data);
       } catch {
         return res.status(422).send({ message: "Cannot create JSON" });
       }
