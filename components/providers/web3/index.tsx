@@ -38,7 +38,7 @@ const Web3Provider: FunctionComponent<{ children: React.ReactNode }> = ({
         const signedContract = contract.connect(signer);
 
         // Setting global listeners
-        setGlobalListeners(window.ethereum);
+        setTimeout(() => setGlobalListeners(window.ethereum), 500);
 
         /// Setting web3 state
         setWeb3Api(
