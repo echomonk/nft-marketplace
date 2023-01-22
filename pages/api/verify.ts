@@ -5,7 +5,7 @@ import { withSession, contractAddress } from "./utils";
 
 /**
  * API route that generates a message
- * @param req NextApiRequest
+ * @param req NextApiRequest & Session
  * @param res NextApiResponse
  * @returns Message
  */
