@@ -24,16 +24,51 @@ const NftCreate: NextPage = () => {
     ],
   });
 
+  // Getting Signed Data
+  const getSignedData = async () => {
+    const messageToSign = await axios.get("/api/verify");
+
+    // Getting accounts from Metamask
+    const accounts = (await ethereum?.request({
+      method: "eth_requestAccounts",
+    })) as string;
+
+    const account = accounts[0];
+
+    // Signing the message
+    const signedData = await ethereum?.request({
+      method: "personal_sign",
+      params: [
+        JSON.stringify(messageToSign.data),
+        account,
+        messageToSign.data.id,
+      ],
+    });
+    return { signedData, account };
+  };
+
   // Upload Image
   const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) {
+    if (!e.target.files || e.target.files.length === 0) {
       console.error("Select a file");
       return;
     }
     const file = e.target.files[0];
     const buffer = await file.arrayBuffer();
     const bytes = new Uint8Array(buffer);
-    console.log(bytes);
+    try {
+      const { signedData, account } = await getSignedData();
+      const res = await axios.post("/api/verify-image", {
+        address: account,
+        signature: signedData,
+        bytes,
+        contentType: file.type,
+        fileName: file.name.replace(/\.[^/.]+$/, ""),
+      });
+      console.log(res.data);
+    } catch (e: any) {
+      console.error(e.message);
+    }
   };
 
   // Set Meta Data
@@ -63,24 +98,7 @@ const NftCreate: NextPage = () => {
   // Create NFT
   const createNft = async () => {
     try {
-      const messageToSign = await axios.get("/api/verify");
-
-      // Getting accounts from Metamask
-      const accounts = (await ethereum?.request({
-        method: "eth_requestAccounts",
-      })) as string;
-
-      const account = accounts[0];
-
-      // Signing the message
-      const signedData = await ethereum?.request({
-        method: "personal_sign",
-        params: [
-          JSON.stringify(messageToSign.data),
-          account,
-          messageToSign.data.id,
-        ],
-      });
+      const { signedData, account } = await getSignedData();
       // Sending the signed data to the server
       await axios.post("/api/verify", {
         address: account,
