@@ -15,6 +15,7 @@ type UseNetworkResponse = {
   isLoading: boolean;
   isSupported: boolean;
   targetNetwork: string;
+  isConnectedToNetwork: boolean;
 };
 
 const targetId = process.env.NEXT_PUBLIC_TARGET_CHAIN_ID as string;
@@ -41,12 +42,15 @@ export const hookFactory: NetworkHookFactory =
       }
     );
 
+    const isSupported = data === targetNetwork;
+
     return {
       ...swr,
       data,
       isValidating,
       targetNetwork,
-      isSupported: data === targetNetwork,
-      isLoading: isLoading || isValidating,
+      isSupported,
+      isConnectedToNetwork: !isLoading && isSupported,
+      isLoading: isLoading as boolean,
     };
   };
