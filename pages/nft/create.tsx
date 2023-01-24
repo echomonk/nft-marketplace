@@ -8,11 +8,13 @@ import Link from "next/link";
 import { NftMeta, PinataRes } from "@_types/nft";
 import axios from "axios";
 import { UseWeb3 } from "@providers/web3";
+import { ethers } from "ethers";
+import { toast } from "react-toastify";
 
 const ALLOWED_FIELDS = ["name", "description", "image", "attributes"];
 
 const NftCreate: NextPage = () => {
-  const { ethereum } = UseWeb3();
+  const { ethereum, contract } = UseWeb3();
   const [nftURI, setNftURI] = useState("");
   const [price, setPrice] = useState("");
   const [hasURI, setHasURI] = useState(false);
@@ -61,12 +63,18 @@ const NftCreate: NextPage = () => {
     const bytes = new Uint8Array(buffer);
     try {
       const { signedData, account } = await getSignedData();
-      const res = await axios.post("/api/verify-image", {
+      const promise = axios.post("/api/verify-image", {
         address: account,
         signature: signedData,
         bytes,
         contentType: file.type,
         fileName: file.name.replace(/\.[^/.]+$/, ""),
+      });
+
+      const res = await toast.promise(promise, {
+        pending: "Uploading image",
+        success: "Image uploaded",
+        error: "Image upload error",
       });
 
       const data = res.data as PinataRes;
@@ -111,11 +119,18 @@ const NftCreate: NextPage = () => {
     try {
       const { signedData, account } = await getSignedData();
       // Sending the signed data to the server
-      const res = await axios.post("/api/verify", {
+      const promise = axios.post("/api/verify", {
         address: account,
         signature: signedData,
         nft: nftMeta,
       });
+
+      const res = await toast.promise(promise, {
+        pending: "Uploading Metadata",
+        success: "Metadata uploaded",
+        error: "Metadata upload error",
+      });
+
       const data = res.data as PinataRes;
       setNftURI(
         `${process.env.NEXT_PUBLIC_PINATA_DOMAIN}/ipfs/${data.IpfsHash}`
@@ -146,7 +161,19 @@ const NftCreate: NextPage = () => {
         }
       });
 
-      alert(price);
+      const tx = await contract?.mintToken(
+        nftURI,
+        ethers.utils.parseEther(price),
+        {
+          value: ethers.utils.parseEther((0.025).toString()),
+        }
+      );
+
+      await toast.promise(tx!.wait(), {
+        pending: "Creating NFT",
+        success: "NFT created!",
+        error: "NFT upload error!",
+      });
     } catch (e: any) {
       console.error(e.message);
     }
