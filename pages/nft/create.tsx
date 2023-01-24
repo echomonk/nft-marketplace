@@ -5,13 +5,16 @@ import { ChangeEvent, useState } from "react";
 import { BaseLayout } from "@ui";
 import { Switch } from "@headlessui/react";
 import Link from "next/link";
-import { NftMeta } from "@_types/nft";
+import { NftMeta, PinataRes } from "@_types/nft";
 import axios from "axios";
 import { UseWeb3 } from "@providers/web3";
+
+const ALLOWED_FIELDS = ["name", "description", "image", "attributes"];
 
 const NftCreate: NextPage = () => {
   const { ethereum } = UseWeb3();
   const [nftURI, setNftURI] = useState("");
+  const [price, setPrice] = useState("");
   const [hasURI, setHasURI] = useState(false);
   const [nftMeta, setNftMeta] = useState<NftMeta>({
     name: "",
@@ -65,13 +68,21 @@ const NftCreate: NextPage = () => {
         contentType: file.type,
         fileName: file.name.replace(/\.[^/.]+$/, ""),
       });
+
+      const data = res.data as PinataRes;
+
+      setNftMeta({
+        ...nftMeta,
+        image: `${process.env.NEXT_PUBLIC_PINATA_DOMAIN}/ipfs/${data.IpfsHash}`,
+      });
+
       console.log(res.data);
     } catch (e: any) {
       console.error(e.message);
     }
   };
 
-  // Set Meta Data
+  // Set Metadata
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -95,16 +106,47 @@ const NftCreate: NextPage = () => {
     });
   };
 
-  // Create NFT
-  const createNft = async () => {
+  // Upload NFT Meta Data
+  const uploadMetaData = async () => {
     try {
       const { signedData, account } = await getSignedData();
       // Sending the signed data to the server
-      await axios.post("/api/verify", {
+      const res = await axios.post("/api/verify", {
         address: account,
         signature: signedData,
         nft: nftMeta,
       });
+      const data = res.data as PinataRes;
+      setNftURI(
+        `${process.env.NEXT_PUBLIC_PINATA_DOMAIN}/ipfs/${data.IpfsHash}`
+      );
+    } catch (e: any) {
+      console.error(e.message);
+    }
+  };
+
+  // Handle Price Change
+  const handlePriceChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setPrice(e.target.value);
+  };
+
+  // Create NFT
+  const createNft = async () => {
+    try {
+      const nftRes = await axios.get(nftURI, {
+        headers: { Accept: "text/plain" },
+      });
+      const content = nftRes.data;
+
+      Object.keys(content).forEach((key) => {
+        if (!ALLOWED_FIELDS.includes(key)) {
+          throw new Error("Invalid Json structure");
+        }
+      });
+
+      alert(price);
     } catch (e: any) {
       console.error(e.message);
     }
@@ -193,6 +235,8 @@ const NftCreate: NextPage = () => {
                       </label>
                       <div className="mt-1 flex rounded-md shadow-sm">
                         <input
+                          onChange={handlePriceChange}
+                          value={price}
                           type="number"
                           name="price"
                           id="price"
@@ -204,6 +248,7 @@ const NftCreate: NextPage = () => {
                   </div>
                   <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
                     <button
+                      onClick={createNft}
                       type="button"
                       className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     >
@@ -273,12 +318,8 @@ const NftCreate: NextPage = () => {
                       </p>
                     </div>
                     {/* Has Image? */}
-                    {false ? (
-                      <img
-                        src="https://eincode.mypinata.cloud/ipfs/QmaQYCrX9Fg2kGijqapTYgpMXV7QPPzMwGrSRfV9TvTsfM/Creature_1.png"
-                        alt=""
-                        className="h-40"
-                      />
+                    {nftMeta.image ? (
+                      <img src={nftMeta.image} alt="" className="h-40" />
                     ) : (
                       <div>
                         <label className="block text-sm font-medium text-gray-700">
@@ -352,7 +393,7 @@ const NftCreate: NextPage = () => {
                   </div>
                   <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
                     <button
-                      onClick={createNft}
+                      onClick={uploadMetaData}
                       type="button"
                       className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     >

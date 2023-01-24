@@ -28,3 +28,10 @@ export type fileReq = {
   contentType: string;
   fileName: string;
 };
+
+export type PinataRes = {
+  IpfsHash: string;
+  PinSize: number;
+  Timestamp: string;
+  isDuplicate: boolean;
+};
