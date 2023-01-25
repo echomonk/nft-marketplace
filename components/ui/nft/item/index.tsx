@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import { shortenAddress } from "@ui/navbar/WalletBar";
 import { FunctionComponent } from "react";
 import { Nft } from "../../../../types/nft";
 
@@ -19,7 +20,26 @@ const NftItem: FunctionComponent<NftItemProps> = ({ item, buyNft }) => {
       </div>
       <div className="flex-1 bg-white p-6 flex flex-col justify-between">
         <div className="flex-1">
-          <p className="text-sm font-medium text-indigo-600">Creatures NFT</p>
+          <div className="flex justify-between items-center">
+            <div className="flex items-center mt-2">
+              <div>
+                <img
+                  className="inline-block h-9 w-9 rounded-full"
+                  src="/images/default_avatar.png"
+                  alt=""
+                />
+              </div>
+              <div className="ml-3">
+                <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">
+                  Creator
+                </p>
+                <p className="text-xs font-medium text-gray-500 group-hover:text-gray-700">
+                  {shortenAddress(item.creator)}
+                </p>
+              </div>
+            </div>
+            <p className="text-sm font-medium text-indigo-600">Creatures NFT</p>
+          </div>
           <div className="block mt-2">
             <p className="text-xl font-semibold text-gray-900">
               {item.meta.name}
