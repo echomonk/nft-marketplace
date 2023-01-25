@@ -2,18 +2,18 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { Session, withIronSession } from "next-iron-session";
 import { ethers } from "ethers";
 import * as util from "ethereumjs-util";
-import contract from "../../public/contracts/NFTMarket.json";
+import Contract from "../../public/contracts/NFTMarket.json";
 import { NftMarketContract } from "@_types/nftMarketContract";
 
-type NETWORK = typeof contract.networks;
+type NETWORK = typeof Contract.networks;
 
 const targetNetwork = process.env.NEXT_PUBLIC_NETWORK_ID as keyof NETWORK;
 
 // Getting contract abi
-const abi = contract.abi;
+const abi = Contract.abi;
 
 // Getting the contract address
-export const contractAddress = contract["networks"][targetNetwork]["address"];
+export const contractAddress = Contract["networks"][targetNetwork]["address"];
 
 export const pinataApiKey = process.env.PINATA_API_KEY as string;
 export const pinataSecretApiKey = process.env.PIN_SECRET_API_KEY as string;
