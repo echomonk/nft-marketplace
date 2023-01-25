@@ -2,11 +2,10 @@
 
 import type { NextPage } from "next";
 import { BaseLayout } from "../components/ui";
-
-import nfts from "../content/meta.json";
 import { Nft } from "../types/nft";
 import { useOwnedNfts } from "@hooks/web3";
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 const tabs = [{ name: "Your Collection", href: "#", current: true }];
 
@@ -156,6 +155,12 @@ const Profile: NextPage = () => {
 
                   <div className="flex">
                     <button
+                      onClick={() => {
+                        downloadImage(
+                          activeNft.meta.image,
+                          activeNft.meta.name
+                        );
+                      }}
                       type="button"
                       className="flex-1 bg-indigo-600 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     >
@@ -180,6 +185,25 @@ const Profile: NextPage = () => {
       </div>
     </BaseLayout>
   );
+};
+
+// Downloads the image
+const downloadImage = async (url: string, name: string) => {
+  const response = await axios.get(url, { responseType: "blob" });
+  const urlCreator = window.URL || window.webkitURL;
+  const imageUrl = urlCreator.createObjectURL(response.data);
+
+  // Creates a link element and setting its attributes
+  const link = document.createElement("a");
+  link.href = imageUrl;
+  link.download = name;
+
+  // Appends the link to the body and click it
+  document.body.appendChild(link);
+  link.click();
+
+  // Removes the link after it has been clicked
+  document.body.removeChild(link);
 };
 
 export default Profile;
