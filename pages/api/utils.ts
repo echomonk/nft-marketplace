@@ -29,6 +29,11 @@ export function withSession(handler: any) {
   });
 }
 
+const url =
+  process.env.NODE_ENV === "production"
+    ? process.env.ALCHEMY_GOERLI_URL
+    : "http://127.0.0.1:7545";
+
 // Checking the session
 export const addressCheckMiddleware = async (
   req: NextApiRequest & { session: Session },
@@ -38,9 +43,7 @@ export const addressCheckMiddleware = async (
     const message = req.session.get("message-session");
 
     // Setting contract instance on server side
-    const provider = new ethers.providers.JsonRpcProvider(
-      "http://127.0.0.1:7545"
-    );
+    const provider = new ethers.providers.JsonRpcProvider(url);
 
     const contract = new ethers.Contract(
       contractAddress,
