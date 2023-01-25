@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { Session, withIronSession } from "next-iron-session";
-import contract from "../../public/contracts/NFTMarket.json";
 import { ethers } from "ethers";
 import * as util from "ethereumjs-util";
+import contract from "../../public/contracts/NFTMarket.json";
 import { NftMarketContract } from "@_types/nftMarketContract";
 
 type NETWORK = typeof contract.networks;
