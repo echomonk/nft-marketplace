@@ -1,6 +1,6 @@
 NFT market place where users can create NFTs and sell.
 
-nft-market-plum.vercel.app
+website: https://nft-market-echomonk.vercel.app/
 
 
 https://user-images.githubusercontent.com/99912633/214756012-7c4bcff6-b18b-49ac-9e30-9e524c10428e.mov
